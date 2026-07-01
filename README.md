@@ -80,6 +80,8 @@ firmware lida com os dois automaticamente.
 | SDA | GPIO21 |
 | SCL | GPIO22 |
 
+![Montagem real: ESP32 e o módulo do magnetômetro ligados na protoboard](assets/montagem.jpg)
+
 Ligue o sensor a alguns centímetros de metal e mantenha a placa nivelada para a leitura
 de inclinação ficar correta.
 
