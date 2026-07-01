@@ -125,7 +125,8 @@ Sobral, útil para testar a interface.
   calibração, cálculo de grandezas, servidor WebSocket e testes nativos.
 - `web/` a demo em JavaScript puro (Three.js), fonte única de telemetria com fallback
   para simulado, e testes.
-- `archive/` material legado (primeira versão do deck de slides), mantido como registro.
+- `archive/` a apresentação: o deck final (`slides/apresentacao.html`, feito no Claude
+  Design) e a primeira versão em Reveal.js. Baixe o HTML e abra no navegador para ver.
 - `assets/` imagens usadas neste README.
 
 ## Contexto acadêmico
