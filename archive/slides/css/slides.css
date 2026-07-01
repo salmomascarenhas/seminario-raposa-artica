@@ -1,0 +1,240 @@
+/* Tema do seminário sobre o Reveal — híbrido:
+   - PADRÃO = LIGHT (sala clara/projetor: texto legível, brasão natural no branco).
+   - Tecla T alterna para DARK (body.theme-dark) como ajuste fino no dia.
+   - Slides de CENA (Ato 2/3/4) parecem escuros em qualquer tema, pois o canvas 3D
+     full-bleed (#scene-stage) cobre a viewport — requisito do bloom/glow. */
+
+:root {
+  /* accents institucionais/identidade (constantes nos dois temas) */
+  --ufc-blue: #0b3d91;
+  --ufc-blue-soft: rgba(11, 61, 145, 0.5);
+  --mono: ui-monospace, "SF Mono", "JetBrains Mono", Menlo, monospace;
+}
+
+/* ---- TEMA CLARO (padrão) ---- */
+body {
+  --bg: #eef1f6;
+  --fg: #0e1422;
+  --fg-muted: rgba(14, 20, 34, 0.55);
+  --border: rgba(14, 20, 34, 0.14);
+  --accent: var(--ufc-blue);     /* ênfase de conteúdo no claro = azul UFC (legível) */
+  --accent-2: #0d7d6b;           /* teal escurecido p/ contraste no branco */
+  --chip-bg: rgba(11, 61, 145, 0.08);
+}
+
+/* ---- TEMA ESCURO (toggle) ---- */
+body.theme-dark {
+  --bg: #0a0e16;
+  --fg: #e8edf5;
+  --fg-muted: rgba(232, 237, 245, 0.45);
+  --border: rgba(255, 255, 255, 0.08);
+  --accent: #ffd23f;             /* dourado vivo no escuro */
+  --accent-2: #36e0c0;
+  --chip-bg: rgba(11, 61, 145, 0.18);
+}
+
+/* o Reveal pinta o fundo em .reveal-viewport (= body) via --r-background-color;
+   sobrescrevemos com o token do tema para o claro/escuro valer de fato */
+.reveal-viewport { background: var(--bg) !important; }
+.reveal { color: var(--fg); font-family: system-ui, -apple-system, "Segoe UI", sans-serif; }
+.reveal h1, .reveal h2, .reveal h3 { color: var(--fg); text-transform: none; letter-spacing: -0.02em; }
+.reveal .gold { color: var(--accent); }
+.reveal .teal { color: var(--accent-2); }
+.reveal a { color: var(--accent); }
+.reveal section { background: transparent; }
+
+/* palco de cena: full-bleed atrás do texto do Reveal (sempre escuro por dentro) */
+#scene-stage { position: fixed; inset: 0; z-index: 0; }
+.reveal { z-index: 1; }
+
+/* card de legenda sobre a cena — SEMPRE escuro (fica sobre o canvas 3D escuro) */
+.scene-caption {
+  position: absolute; left: 4vw; top: 6vh; bottom: auto; max-width: 36vw; text-align: left;
+  padding: 20px 24px; border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px;
+  background: rgba(10, 14, 22, 0.72); backdrop-filter: blur(10px); color: #e8edf5;
+}
+.scene-caption .act { font-family: var(--mono); font-size: 12px; letter-spacing: 0.1em; color: #ffd23f; }
+.scene-caption h2 { font-size: 30px; margin: 6px 0 10px; color: #e8edf5; }
+.scene-caption p { font-size: 17px; line-height: 1.5; color: rgba(232, 237, 245, 0.7); margin: 0; }
+.scene-caption .gold { color: #ffd23f; }
+.scene-caption .teal { color: #36e0c0; }
+
+/* marcador de conteúdo pendente */
+.todo {
+  display: inline-block; font-family: var(--mono); font-size: 12px;
+  color: var(--accent-2); border: 1px dashed currentColor;
+  border-radius: 4px; padding: 1px 6px; margin: 2px 0;
+}
+
+/* ---- moldura institucional UFC (capa, créditos, rodapé) ---- */
+/* sem painel/gradiente no slide: o brasão + título azul carregam a identidade,
+   evitando uma "caixa" de bordas duras que não funde com o fundo da página */
+.brasao { height: 130px; margin-bottom: 18px; }
+.cover-title { font-size: 46px; line-height: 1.1; margin: 0 0 8px; }
+.cover-sub { font-size: 20px; color: var(--fg-muted); margin: 0; }
+.cover-tagline { font-family: var(--mono); font-size: 14px; color: var(--accent); margin: 12px 0 0; letter-spacing: 0.06em; }
+.cover-meta { margin-top: 28px; font-family: var(--mono); font-size: 14px; letter-spacing: 0.04em; color: var(--fg); }
+.cover-meta .chip {
+  display: inline-block; padding: 4px 10px; margin: 3px;
+  border: 1px solid var(--ufc-blue-soft); border-radius: 6px; background: var(--chip-bg);
+}
+
+/* rodapé institucional discreto */
+#deck-footer {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 2;
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 6px 16px; pointer-events: none;
+  font-family: var(--mono); font-size: 10px; letter-spacing: 0.06em;
+  color: var(--fg-muted);
+  border-top: 1px solid rgba(11, 61, 145, 0.35);
+  background: linear-gradient(180deg, transparent, rgba(11, 61, 145, 0.08));
+}
+
+/* controles/progresso do Reveal acima da cena 3D, lendo como chrome */
+.reveal .controls { z-index: 4; color: var(--accent); }
+.reveal .controls .controls-arrow { filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.5)); }
+.reveal .progress { z-index: 4; color: var(--accent); }
+
+/* indicador do tema (canto), reflete o toggle da tecla T */
+#theme-hint {
+  position: fixed; top: 10px; left: 12px; z-index: 3; pointer-events: none;
+  font-family: var(--mono); font-size: 10px; letter-spacing: 0.06em; color: var(--fg-muted);
+}
+
+/* slider do simulador de latitude (Ato 2) — dentro do card escuro */
+.lat-control { margin-top: 14px; }
+.lat-control input[type="range"] { width: 100%; accent-color: #ffd23f; }
+.lat-control .lat-readout { font-family: var(--mono); font-variant-numeric: tabular-nums; font-size: 14px; color: #e8edf5; }
+
+/* equação inline dentro do card de cena do Ato 2 (B, I, tan(I)=2tan(λ), ∇·B=0) */
+.scene-caption .eqline {
+  font-family: var(--mono); font-size: 20px; color: #ffd23f;
+  margin: 12px 0 0; letter-spacing: 0.01em;
+}
+.scene-caption .eqline small {
+  display: block; font-family: var(--sans, sans-serif); font-size: 13px;
+  color: rgba(232, 237, 245, 0.6); margin-top: 3px; letter-spacing: 0;
+}
+
+/* ===== Ato 2 — dois modos de slide (decisão: visualização grande vs informação grande) =====
+   Beats de CENA (2a, 2c): a visualização 3D é a estrela. O card é enxuto e translúcido,
+   encostado à esquerda, e NÃO cobre o dipolo (centralizado). Sem auto-rotação no renderer,
+   o enquadramento fica estável e o "fundo" sempre aparece. */
+.scene-caption.slim { max-width: 27vw; }
+.scene-caption.glass { background: rgba(8, 11, 18, 0.48); border-color: rgba(255, 255, 255, 0.08); }
+
+/* Beats de INFORMAÇÃO (2b inclinação, 2d contraste): a informação é a estrela, grande e
+   centralizada, sobre a cena escurecida. Honra o pedido do professor (info que se vê grande,
+   diagrama/tabela em destaque). */
+.scene-feature {
+  position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);
+  width: min(72vw, 880px); text-align: center; color: #e8edf5;
+  padding: 34px 40px; border-radius: 16px;
+  background: rgba(8, 11, 18, 0.78); border: 1px solid rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(10px);
+}
+.scene-feature .act { font-family: var(--mono); font-size: 12px; letter-spacing: 0.1em; color: #ffd23f; }
+.scene-feature h2 { font-size: 34px; margin: 6px 0 6px; color: #fff; }
+.scene-feature p { font-size: 19px; line-height: 1.5; color: rgba(232, 237, 245, 0.75); margin: 0; }
+.scene-feature .gold { color: #ffd23f; }
+.scene-feature .teal { color: #36e0c0; }
+/* equação em destaque (grande) dos beats de informação */
+.scene-feature .eqbig {
+  font-family: var(--mono); font-size: 46px; color: #ffd23f;
+  margin: 22px 0 6px; letter-spacing: 0.01em; line-height: 1.1;
+}
+.scene-feature .eqbig small {
+  display: block; font-family: system-ui, sans-serif; font-size: 16px;
+  color: rgba(232, 237, 245, 0.6); margin-top: 10px; letter-spacing: 0;
+}
+/* diagrama deitado -> vertical (2b): duas setas grandes com rótulo */
+.dip-demo { display: flex; justify-content: center; align-items: flex-end; gap: 64px; margin: 8px 0 4px; }
+.dip-demo figure { margin: 0; }
+.dip-demo .arrow { font-size: 52px; line-height: 1; color: var(--accent-2); display: block; }
+.dip-demo figcaption { font-family: var(--mono); font-size: 15px; color: var(--fg); margin-top: 6px; }
+/* contraste Sobral × Ártico grande (2d) */
+.scene-feature .contrast {
+  display: flex; gap: 40px; margin: 20px 0 6px; text-align: left;
+  font-family: var(--mono); line-height: 1.5;
+}
+.scene-feature .contrast > div { flex: 1; font-size: 18px; color: rgba(232, 237, 245, 0.82); }
+.scene-feature .contrast .big { font-size: 40px; font-weight: 700; display: block; margin: 4px 0; }
+
+/* ===== Ato 4 — demo ao vivo: selo + readout grande da inclinação (o pagamento) ===== */
+.live-seal {
+  font-family: var(--mono); font-size: 14px; letter-spacing: 0.08em;
+  color: #36e0c0; /* verde = AO VIVO; vira cinza em "simulado" via .sim */
+}
+.live-seal.sim { color: rgba(232, 237, 245, 0.5); }
+.live-readout { margin: 14px 0 10px; }
+.live-readout .live-inc {
+  font-family: var(--mono); font-variant-numeric: tabular-nums;
+  font-size: 60px; font-weight: 700; line-height: 1; color: #ffd23f;
+}
+.live-readout .live-aux {
+  font-family: var(--mono); font-variant-numeric: tabular-nums;
+  font-size: 13px; color: rgba(232, 237, 245, 0.6); margin-top: 8px;
+}
+
+/* ===== Ato 5 — fechamento (tema claro): três faces + grade de Maxwell ===== */
+.faces { display: flex; gap: 28px; justify-content: center; margin: 26px auto; max-width: 60rem; text-align: left; }
+.faces > div { flex: 1; }
+.faces .face-t { font-family: var(--mono); font-size: 24px; font-weight: 700; margin-bottom: 6px; }
+.faces .face-d { font-size: 18px; line-height: 1.45; color: var(--fg-muted); }
+.faces .teal { color: var(--accent-2); }
+
+.maxwell {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 18px 48px;
+  width: fit-content; margin: 24px auto 6px; align-items: center;
+  font-family: var(--mono); font-size: 30px; color: var(--fg); letter-spacing: 0.01em;
+}
+.maxwell > div { text-align: left; }
+.maxwell .hl {
+  color: var(--accent); font-weight: 700;
+  border: 1px solid var(--ufc-blue-soft); border-radius: 8px;
+  padding: 4px 12px; justify-self: start;
+}
+body.theme-dark .maxwell .hl { border-color: rgba(255, 210, 63, 0.5); }
+
+/* layout de duas colunas (texto | imagem) para slides 16:9 — evita overflow vertical */
+.cols { display: flex; align-items: center; justify-content: center; gap: 48px;
+  text-align: left; max-width: 62rem; margin: 0 auto; }
+.cols .col-text { flex: 1 1 0; min-width: 0; }
+.cols .col-img { flex: 1 1 0; min-width: 0; }
+.cols .col-text .act { margin-bottom: 4px; }
+.cols .col-text h2 { font-size: 33px; line-height: 1.12; margin: 0 0 14px; }
+.cols .col-text p { font-size: 21px; line-height: 1.4; margin: 0 0 10px; }
+.cols .col-img img { width: 100%; height: auto; display: block; border-radius: 12px; }
+.cols .col-img figcaption { font-family: var(--mono); font-size: 13px;
+  color: var(--fg-muted); margin-top: 6px; }
+
+/* referências nos créditos: lista compacta, legível, alinhada à esquerda */
+.reveal .refs {
+  list-style: none; max-width: 56rem; margin: 26px auto 0; padding: 0;
+  text-align: left; font-size: 14px; line-height: 1.5; color: var(--fg-muted);
+}
+.reveal .refs li { list-style: none; margin: 5px 0; padding-left: 14px; text-indent: -14px; }
+.reveal .refs li::before { content: "·"; color: var(--accent); margin-right: 8px; }
+
+/* ---- Ato 3: helpers de conteúdo (slides de texto, tema claro) ---- */
+/* bloco de equação inline com a notação da disciplina (B=µH, m_a=Σm_o+Σm_s, U=−m·B) */
+.reveal .eq {
+  font-family: var(--mono); font-size: 34px; color: var(--accent);
+  margin: 20px 0; letter-spacing: 0.01em; line-height: 1.35;
+}
+.reveal .eq small { display: block; color: var(--fg-muted); font-size: 15px; margin-top: 8px; }
+
+/* evidência do Červený 2011: bússola (setor NE) + os dois números de acerto */
+.stat-compass { display: flex; align-items: center; justify-content: center; gap: 52px; margin-top: 10px; }
+.stat-compass svg { flex: none; }
+.stat-figures { text-align: left; }
+.stat-figures .big-num { font-family: var(--mono); font-variant-numeric: tabular-nums; font-size: 50px; font-weight: 700; line-height: 1; }
+.stat-figures .big-num.hit { color: var(--accent-2); }
+.stat-figures .big-num.miss { color: var(--fg-muted); }
+.stat-figures .lbl { font-size: 15px; color: var(--fg-muted); margin: 2px 0 18px; max-width: 18ch; }
+
+/* citação acadêmica discreta (fonte do dado, não ressalva) */
+.reveal .src {
+  font-family: var(--mono); font-size: 12px; color: var(--fg-muted);
+  letter-spacing: 0.02em; margin-top: 16px;
+}

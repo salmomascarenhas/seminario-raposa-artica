@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Campo magnético da sala, demo ao vivo</title>
+<link rel="stylesheet" href="css/main.css" />
+<script type="importmap">
+{
+  "imports": {
+    "three": "./vendor/three/three.module.js",
+    "three/addons/": "./vendor/three/addons/"
+  }
+}
+</script>
+</head>
+<body>
+  <div id="stage"></div>
+  <div class="badge sim" id="badge">SIMULADO</div>
+  <div class="cal-banner" id="calBanner" hidden>CALIBRANDO, gire a placa em todas as direções</div>
+  <div class="readout" id="readout"></div>
+  <div class="controls" id="controls">
+    <button id="btnCalibrate" type="button">Calibrar</button>
+    <button id="btnTare" type="button">Zerar (tare)</button>
+    <button id="btnFreeze" type="button">Congelar</button>
+  </div>
+
+<script type="module">
+import { mockFrame } from "./js/field-model.js";
+import { createTelemetrySource } from "./js/telemetry-source.js";
+import { mountRenderer } from "./js/pick-renderer.js";
+
+// Fonte de dados: WebSocket real da ESP, com fallback browser-mock automático.
+const source = createTelemetrySource({
+  url: "ws://192.168.4.1/ws",
+  WebSocketCtor: WebSocket,
+  mockFrame,
+  now: () => performance.now(),
+  fallbackMs: 2000,
+});
+
+// Renderiza o vetor B: HeroRenderer 3D (Three.js), com fallback Canvas 2D se o WebGL falhar.
+mountRenderer(document.getElementById("stage"), () => source.getState());
+
+// Botões de comando: mandam {cmd:...} pela mesma WebSocket do ESP32.
+const byId = (id) => document.getElementById(id);
+byId("btnCalibrate").onclick = () => source.send({ cmd: "calibrate" });
+byId("btnTare").onclick = () => source.send({ cmd: "tare" });
+byId("btnFreeze").onclick = () => source.send({ cmd: "freeze" });
+
+// Selo AO VIVO/SIMULADO + aviso de calibração + leitura numérica, ~10 Hz.
+const badge = document.getElementById("badge");
+const readout = document.getElementById("readout");
+const calBanner = document.getElementById("calBanner");
+setInterval(() => {
+  const live = source.status === "live";
+  badge.className = "badge " + (live ? "live" : "sim");
+  badge.textContent = live ? "AO VIVO" : "SIMULADO";
+  const s = source.getState();
+  calBanner.hidden = !s.calibrating;
+  readout.innerHTML =
+    `<div class="metric hero">` +
+      `<span class="label">Inclinação</span>` +
+      `<span class="value">${s.inclination.toFixed(1)}<span class="unit">°</span></span>` +
+    `</div>` +
+    `<div class="metric">` +
+      `<span class="label">Intensidade |B|</span>` +
+      `<span class="value">${s.magnitude.toFixed(1)}<span class="unit">µT</span></span>` +
+    `</div>` +
+    `<div class="metric">` +
+      `<span class="label">Rumo</span>` +
+      `<span class="value">${s.heading.toFixed(1)}<span class="unit">°</span></span>` +
+    `</div>`;
+}, 100);
+</script>
+</body>
+</html>

@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Visão da raposa, Ato 3</title>
+<link rel="stylesheet" href="css/main.css" />
+</head>
+<body>
+  <div id="stage"></div>
+  <div class="badge sim" id="badge">SIMULADO</div>
+  <div class="readout" id="readout"></div>
+
+<script type="module">
+import { mockFrame } from "./js/field-model.js";
+import { createTelemetrySource } from "./js/telemetry-source.js";
+import { mount } from "./js/fox-vision.js";
+
+// Fonte de dados: WebSocket real da ESP, com fallback browser-mock automático.
+const source = createTelemetrySource({
+  url: "ws://192.168.4.1/ws",
+  WebSocketCtor: WebSocket,
+  mockFrame,
+  now: () => performance.now(),
+  fallbackMs: 2000,
+});
+
+// HUD da "visão da raposa", usa o heading do contrato.
+mount(document.getElementById("stage"), () => source.getState());
+
+// Selo AO VIVO/SIMULADO + leitura numérica, ~10 Hz.
+const badge = document.getElementById("badge");
+const readout = document.getElementById("readout");
+setInterval(() => {
+  const live = source.status === "live";
+  badge.className = "badge " + (live ? "live" : "sim");
+  badge.textContent = live ? "AO VIVO" : "SIMULADO";
+  const s = source.getState();
+  readout.innerHTML = `hdg <b>${s.heading.toFixed(1)}</b>°&nbsp;&nbsp;I <b>${s.inclination.toFixed(1)}</b>°`;
+}, 100);
+</script>
+</body>
+</html>

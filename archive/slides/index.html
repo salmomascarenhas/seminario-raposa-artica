@@ -1,0 +1,373 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Magnetorrecepção · Seminário</title>
+<link rel="stylesheet" href="vendor/reveal/reveal.css" />
+<link rel="stylesheet" href="vendor/reveal/theme/black.css" />
+<link rel="stylesheet" href="css/slides.css" />
+<!-- Three.js e módulos da web são reaproveitados de ../web (mesma fonte de verdade). -->
+<script type="importmap">
+{
+  "imports": {
+    "three": "../web/vendor/three/three.module.js",
+    "three/addons/": "../web/vendor/three/addons/"
+  }
+}
+</script>
+<style>
+  /* Placeholder de imagem — onde entra recurso do docs/imagens-manifesto.md.
+     Some sozinho quando um <img>/figura real for colocado no lugar. */
+  .img-ph {
+    display:flex; align-items:center; justify-content:center; text-align:center;
+    min-height:300px; max-width:80%; margin:14px auto 0; padding:18px;
+    border:2px dashed var(--border); border-radius:12px;
+    color:var(--muted, #8b93a3); font-family:var(--mono); font-size:15px; line-height:1.4;
+    background:rgba(127,140,160,0.06);
+  }
+  .img-ph small { display:block; opacity:.7; margin-top:6px; font-size:12px; }
+  .icon-row { display:flex; gap:28px; justify-content:center; align-items:center;
+    font-size:40px; margin:18px 0; }
+  .icon-row figure { margin:0; } .icon-row figcaption { font-size:13px; opacity:.8; }
+</style>
+</head>
+<body>
+  <!-- palco onde os renderizadores 3D/HUD são montados quando um slide de cena fica ativo -->
+  <div id="scene-stage"></div>
+
+  <div class="reveal">
+    <div class="slides">
+      <!-- ESTRUTURA: navegação SÓ horizontal (sem <section> aninhado) e SEM fragments.
+           Cada slide aparece inteiro. Arco: Cabeça (campo) → Corpo A (raposa-gancho) →
+           Corpo B (fabricamos o sensor + demo) → Pés (Maxwell). Roteiro: docs/roteiro-seminario.md -->
+
+      <!-- CAPA -->
+      <section class="institutional">
+        <img class="brasao" src="assets/brasao-ufc.png" alt="Brasão da UFC" />
+        <h1 class="cover-title">Magnetorrecepção na <span class="gold">Raposa Ártica</span></h1>
+        <p class="cover-sub">A bússola que a <span class="gold">evolução</span> e a <span class="gold">engenharia</span> inventaram</p>
+        <div class="cover-meta">
+          <span class="chip">Eletromagnetismo Aplicado</span>
+          <span class="chip">Prof. Carlos Elmano</span>
+          <span class="chip">UFC · Sobral</span>
+          <br>
+          <span class="chip">Salmo da Cruz Mascarenhas</span>
+        </div>
+      </section>
+
+      <!-- ============ CABEÇA — O campo invisível (~5 min) ============ -->
+
+      <!-- S1 — A pergunta de abertura -->
+      <section>
+        <p class="act" style="font-family:var(--mono);color:var(--gold)">O MISTÉRIO</p>
+        <h1 style="font-size:54px;margin:0 0 6px">COMO?</h1>
+        <p style="font-size:20px;margin:0 0 8px">Uma raposa mergulha sob a neve, num alvo que não vê. E acerta.</p>
+        <video src="assets/media/raposa-corte.mp4" data-autoplay loop muted playsinline controls
+               style="display:block; max-height:320px; max-width:78%; margin:14px auto 0; border-radius:12px; border:1px solid var(--border)"></video>
+      </section>
+
+      <!-- S2 — A Terra é um ímã -->
+      <section>
+        <h2>A Terra é um <span class="gold">ímã</span></h2>
+        <p>Um campo magnético atravessa esta sala. Tem intensidade e, sobretudo, <b class="gold">direção</b>.</p>
+        <figure style="margin:10px auto 0; max-width:62%">
+          <img src="assets/img/terra-dipolo-ref.png" alt="Terra com as linhas do campo magnético dipolar"
+               style="width:100%; max-height:420px; object-fit:contain; border-radius:12px; display:block" />
+        </figure>
+      </section>
+
+      <!-- S3 — O campo "mergulha" conforme a latitude (cena: simulador de latitude) -->
+      <section data-scene="latitude">
+        <div class="scene-caption glass">
+          <div class="act">A INCLINAÇÃO</div>
+          <h2>O campo <span class="gold">mergulha</span> conforme a latitude</h2>
+          <div class="lat-control">
+            <input type="range" id="lat-slider" min="0" max="89" step="1" value="3" />
+            <div class="lat-readout">λ <span id="lat-val">3</span>°&nbsp;&nbsp;→&nbsp;&nbsp;I <span id="inc-val">0.0</span>°</div>
+          </div>
+          <p class="eqline">tan(I) = 2·tan(λ)
+            <small>equador → deitado (I=0) · polo → vertical (I=90°). λ = latitude magnética.</small></p>
+        </div>
+      </section>
+
+      <!-- S4 — Onde nós estamos -->
+      <section>
+        <div class="cols">
+          <div class="col-text">
+            <div class="act" style="font-family:var(--mono);color:var(--gold)">ONDE ESTAMOS</div>
+            <h2>Sobral, sobre o <span class="gold">equador magnético</span></h2>
+            <p>Inclinação baixa: o campo aqui está <b class="gold">quase deitado</b>.</p>
+          </div>
+          <figure class="col-img" style="margin:0">
+            <img src="assets/img/inclinacao-sobral.jpg" alt="Mapa de inclinação magnética: Sobral sobre a linha de inclinação zero"
+                 style="border:1px solid var(--border)" />
+            <figcaption>Linha verde = inclinação 0 (equador magnético). Sobral cai sobre ela. NOAA/NCEI, WMM 2025</figcaption>
+          </figure>
+        </div>
+      </section>
+
+      <!-- ============ CORPO A — A raposa lê o campo (~3,5 min) ============ -->
+
+      <!-- S5 — O animal tem uma bússola -->
+      <section>
+        <div class="cols">
+          <div class="col-text">
+            <p class="act" style="font-family:var(--mono);color:var(--gold)">A RAPOSA</p>
+            <h2>O animal tem uma <span class="gold">bússola</span></h2>
+            <p>Saltos de caça com direção preferencial para o <b class="teal">nordeste magnético</b>.</p>
+            <p class="src" style="margin-top:14px">Červený et al., <i>Biology Letters</i>, 2011 · 592 saltos · raposa-vermelha (<i>Vulpes vulpes</i>)</p>
+          </div>
+          <figure class="col-img" style="margin:0">
+            <img src="assets/img/fox-mousing.jpg" alt="Raposa-vermelha mergulhando de cabeça na neve para caçar"
+                 style="border:1px solid var(--border)" />
+            <figcaption>Raposa-vermelha em bote na neve. Foto: Goutham89, CC BY-SA 4.0</figcaption>
+          </figure>
+        </div>
+      </section>
+
+      <!-- S6 — Como? Duas hipóteses (cena: visão da raposa) -->
+      <section data-scene="fox">
+        <div class="scene-caption slim glass">
+          <div class="act">COMO? · duas hipóteses</div>
+          <h2>E são <span class="gold">hipóteses</span></h2>
+          <p><b class="gold">Telêmetro pela inclinação:</b> usar o mergulho do campo para mirar.</p>
+          <p><b class="gold">Bússola química (spin do elétron):</b> reação sensível ao campo, efeito Zeeman.</p>
+        </div>
+      </section>
+
+      <!-- S7 — Por que esse truque não funcionaria aqui -->
+      <section>
+        <div class="act" style="font-family:var(--mono);color:var(--gold)">A REVIRAVOLTA</div>
+        <h2>Esse truque <span class="gold">não funcionaria aqui</span></h2>
+        <div class="dip-demo">
+          <figure><span class="arrow">↑</span><figcaption>Alto Ártico · I ≈ 80° · campo mergulha</figcaption></figure>
+          <figure><span class="arrow">→</span><figcaption>Sobral · I ≈ 0° · campo deitado</figcaption></figure>
+        </div>
+        <p>Sem mergulho, não há telêmetro. O contraste liga a biologia à <b class="gold">medição a seguir</b>.</p>
+      </section>
+
+      <!-- ============ CORPO B — Nós fabricamos o mesmo sensor (~8 min) ============ -->
+
+      <!-- S8 — Não nascemos com o sentido; construímos -->
+      <section>
+        <div class="cols">
+          <div class="col-text">
+            <p class="act" style="font-family:var(--mono);color:var(--gold)">A ENGENHARIA</p>
+            <h2>Nós <span class="gold">construímos</span> um sensor para o mesmo problema</h2>
+            <p>Detectar a direção do campo para se orientar. A <b>função</b> é semelhante; o <b>mecanismo</b> é outro, e conhecido.</p>
+          </div>
+          <figure class="col-img" style="margin:0; max-width:42%">
+            <img src="assets/img/sensor-exploded.png" alt="Vista explodida do módulo magnetômetro com os três eixos de medição" />
+            <figcaption>
+              mede o campo em <b style="color:#e0473a">X</b>, <b style="color:#2fa84f">Y</b> e <b style="color:#2f6bd6">Z</b> (magnetômetro de 3 eixos)</figcaption>
+          </figure>
+        </div>
+      </section>
+
+      <!-- S9 — E ele está no seu bolso -->
+      <section>
+        <h2>E ele está no <span class="gold">seu bolso</span></h2>
+        <p>Mesma função do animal: ler o vetor B para se orientar. E não é invenção nossa.</p>
+        <figure style="margin:8px auto 0; max-width:66%">
+          <img src="assets/img/datasheet-hmc.png" alt="Datasheet do HMC5883L: aplicações em telefones e navegação"
+               style="width:100%; max-height:360px; object-fit:contain; border-radius:10px; border:1px solid var(--border); display:block; background:#fff" />
+          <figcaption style="font-size:13px; opacity:.75; margin-top:6px; font-family:var(--mono)">
+            Datasheet do chip: aplicações em <b>Mobile Phones</b> e <b>Navigation Systems</b>. Honeywell HMC5883L</figcaption>
+        </figure>
+      </section>
+
+      <!-- S10 — Quando o campo denuncia: detecção de anomalia (MAD) -->
+      <section>
+        <div class="cols">
+          <div class="col-text">
+            <div class="act" style="font-family:var(--mono);color:var(--gold)">ANOMALIA MAGNÉTICA</div>
+            <h2>Quando o campo <span class="gold">denuncia</span> algo</h2>
+            <p>O casco de aço de um submarino distorce o campo da Terra. Magnetômetros acusam a <b class="gold">anomalia</b>.</p>
+          </div>
+          <figure class="col-img" style="margin:0; max-width:52%">
+            <img src="assets/img/p3-orion.jpg" alt="P-3C Orion em voo, com o MAD boom na cauda"
+                 style="border:1px solid var(--border)" />
+            <figcaption>
+              P-3C Orion: o ferrão na cauda é o <b>MAD boom</b>, longe da eletrônica do avião. U.S. Navy (domínio público)</figcaption>
+          </figure>
+        </div>
+      </section>
+
+      <!-- S11 — DEMONSTRAÇÃO AO VIVO (cena: live) -->
+      <section data-scene="live">
+        <div class="scene-caption glass">
+          <div class="act">DEMONSTRAÇÃO · ao vivo</div>
+          <h2>O campo <span class="gold">desta sala</span>, agora <span class="live-seal" id="live-seal">● AO VIVO</span></h2>
+          <div class="live-readout">
+            <div class="live-inc">I = <span id="live-inc">··</span>°</div>
+            <div class="live-aux">|B| <span id="live-mag">··</span> µT&nbsp;·&nbsp;heading <span id="live-head">··</span>°&nbsp;·&nbsp;<span id="live-status">simulado</span></div>
+          </div>
+          <p>Inclinação <b class="gold">baixa</b> → confirma o equador magnético. Aproximar o <b class="teal">aço</b> → o vetor salta (anomalia).</p>
+        </div>
+      </section>
+
+      <!-- ============ PÉS — A mesma equação (~2,5 min) ============ -->
+
+      <!-- S12 — Tudo é o mesmo campo B → Maxwell (hero: aurora full-bleed) -->
+      <style>
+        #s12 h2, #s12 .face-d, #s12 .maxwell > div { color: #eef3fa; }
+        #s12 .act { color: #ffd23f; }
+        #s12 .face-d b { color: #fff; }
+        #s12 .act, #s12 h2 { text-shadow: 0 2px 10px rgba(0,0,0,.7); }
+        /* cartões glass agrupando os blocos de texto sobre a aurora */
+        #s12 .s12-card {
+          background: rgba(8, 11, 18, 0.6); backdrop-filter: blur(8px);
+          border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 14px;
+          padding: 16px 26px; margin: 14px auto; max-width: 60rem;
+        }
+        #s12 .faces { margin: 0 auto; }
+        #s12 .maxwell { margin: 0 auto; }
+      </style>
+      <section id="s12" data-background-image="assets/img/aurora.jpg"
+               data-background-opacity="0.55" data-background-color="#070a11">
+        <p class="act" style="font-family:var(--mono)">A MESMA FÍSICA</p>
+        <h2>Quatro fenômenos, o <span class="gold">mesmo campo</span></h2>
+        <div class="s12-card">
+          <div class="faces">
+            <div><div class="face-t teal">a raposa</div><div class="face-d">spin do elétron sente B (<b>Zeeman</b>)</div></div>
+            <div><div class="face-t teal">o sensor</div><div class="face-d">mede B por magnetorresistência (<b>AMR</b>)</div></div>
+            <div><div class="face-t teal">o submarino</div><div class="face-d">aço distorce B (<b>anomalia</b>)</div></div>
+            <div><div class="face-t teal">a aurora</div><div class="face-d">partículas guiadas por B (<b>Lorentz</b>)</div></div>
+          </div>
+        </div>
+        <div class="s12-card" style="max-width:44rem">
+          <div class="maxwell">
+            <div>∇ × <b>H</b> = <b>J</b> + ∂<b>D</b>/∂t</div>
+            <div class="hl">∇ · <b>B</b> = 0</div>
+            <div>∇ × <b>E</b> = −∂<b>B</b>/∂t</div>
+            <div>∇ · <b>D</b> = ρ<sub>v</sub></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- S13 — Fecho -->
+      <section>
+        <h1 class="gold" style="font-size:40px;line-height:1.15;max-width:90%;margin:0 auto">Você carrega um magnetômetro no bolso.<br>A raposa nasceu com um.</h1>
+        <p style="margin-top:18px">O eletromagnetismo não está só no quadro. Está no bolso e na biologia.</p>
+      </section>
+
+      <!-- S14 — Referências -->
+      <section>
+        <h2>Referências</h2>
+        <ul class="refs">
+          <li>Červený, J., Begall, S., Burda, H. et al. (2011). Directional preference in hunting foxes. <i>Biology Letters</i>, The Royal Society.</li>
+          <li>Hore, P. J. &amp; Mouritsen, H. (2016). The Radical-Pair Mechanism of Magnetoreception. <i>Annual Review of Biophysics</i>.</li>
+          <li>Datasheets <b>HMC5883L</b> (Honeywell) e <b>QMC5883L</b> (QST): tecnologia AMR; aplicações de navegação.</li>
+          <li>Campo geomagnético e inclinação: <b>NOAA/NCEI</b> (WMM/IGRF); MIT OCW, <i>Essentials of Geophysics</i>.</li>
+          <li>MAD / minas magnéticas / degaussing: US Navy (P-3/P-8); UCL (Goodeve).</li>
+          <li>Equações de Maxwell e materiais magnéticos: material da disciplina (Prof. Carlos Elmano, UFC Sobral).</li>
+          <li>Vídeo de abertura: <b>BBC</b> (documentário de natureza), uso educacional.</li>
+          <li>Imagens: P-3C Orion e aurora boreal, <b>U.S. Navy</b> / <b>U.S. Air Force</b> (domínio público); mapa de inclinação <b>NOAA/NCEI</b> (WMM 2025); raposa por Goutham89 (CC BY-SA 4.0); datasheet <b>Honeywell</b>. Detalhes em docs/imagens-manifesto.md.</li>
+        </ul>
+      </section>
+
+      <!-- OBRIGADO -->
+      <section class="institutional">
+        <img class="brasao" src="assets/brasao-ufc.png" alt="Brasão da UFC" />
+        <h1 class="cover-title gold">Obrigado</h1>
+        <p class="cover-sub">Perguntas?</p>
+        <div class="cover-meta">
+          <span class="chip">Salmo da Cruz Mascarenhas</span>
+        </div>
+      </section>
+
+    </div>
+  </div>
+
+  <!-- rodapé institucional discreto -->
+  <div id="deck-footer">
+    <span>UFC · Sobral · Eletromagnetismo Aplicado</span>
+    <span>Magnetorrecepção</span>
+  </div>
+  <div id="theme-hint">tema: claro · T alterna</div>
+
+  <script src="vendor/reveal/reveal.js"></script>
+  <script src="vendor/reveal/plugin/notes/notes.js"></script>
+  <script type="module">
+    import { mountRenderer } from "../web/js/pick-renderer.js";
+    import { mount as mountFox } from "../web/js/fox-vision.js";
+    import { createTelemetrySource } from "../web/js/telemetry-source.js";
+    import { mockFrame, derive, syntheticField, syntheticFrame } from "../web/js/field-model.js";
+
+    // Fonte ao vivo (demo do Ato 4) com fallback pro mock.
+    const liveSource = createTelemetrySource({
+      url: "ws://192.168.4.1/ws",
+      WebSocketCtor: WebSocket,
+      mockFrame,
+      now: () => performance.now(),
+      fallbackMs: 2000,
+    });
+
+    let latitude = 3;  // slider de S3
+
+    // Cenas 3D reutilizadas (reformulação dos modelos = sessão dedicada futura).
+    const scenes = {
+      latitude: (host) => mountRenderer(host, () => syntheticFrame(latitude)),
+      fox: (host) => mountFox(host, () => liveSource.getState()),
+      live: (host) => mountRenderer(host, () => liveSource.getState()),
+    };
+
+    const stage = document.getElementById("scene-stage");
+    let activeTeardown = null, activeKey = null;
+    async function syncScene(slide) {
+      const key = slide && slide.dataset ? slide.dataset.scene : null;
+      if (key === activeKey) return;
+      if (activeTeardown) { activeTeardown(); activeTeardown = null; }
+      stage.replaceChildren();
+      activeKey = key;
+      stage.style.background = key && scenes[key] ? "#070a11" : "";
+      if (key && scenes[key]) activeTeardown = await Promise.resolve(scenes[key](stage));
+    }
+
+    // Slider de latitude (S3).
+    const slider = document.getElementById("lat-slider");
+    const latVal = document.getElementById("lat-val");
+    const incVal = document.getElementById("inc-val");
+    function updateLat() {
+      latitude = Number(slider.value);
+      latVal.textContent = latitude.toFixed(0);
+      incVal.textContent = derive(syntheticField(latitude)).inclination.toFixed(1);
+    }
+    if (slider) { slider.addEventListener("input", updateLat); updateLat(); }
+
+    // Readout ao vivo (S11).
+    const liveInc = document.getElementById("live-inc");
+    const liveMag = document.getElementById("live-mag");
+    const liveHead = document.getElementById("live-head");
+    const liveStatus = document.getElementById("live-status");
+    const liveSeal = document.getElementById("live-seal");
+    setInterval(() => {
+      const s = liveSource.getState();
+      const live = liveSource.status === "live";
+      if (liveInc) liveInc.textContent = s.inclination.toFixed(1);
+      if (liveMag) liveMag.textContent = s.magnitude.toFixed(0);
+      if (liveHead) liveHead.textContent = s.heading.toFixed(0);
+      if (liveStatus) liveStatus.textContent = live ? "ao vivo" : "simulado";
+      if (liveSeal) { liveSeal.textContent = live ? "● AO VIVO" : "● simulado"; liveSeal.classList.toggle("sim", !live); }
+    }, 100);
+
+    // Tema (tecla T).
+    const hint = document.getElementById("theme-hint");
+    function applyThemeHint() {
+      hint.textContent = `tema: ${document.body.classList.contains("theme-dark") ? "escuro" : "claro"} · T alterna`;
+    }
+    window.addEventListener("keydown", (e) => {
+      if (e.key === "t" || e.key === "T") { document.body.classList.toggle("theme-dark"); applyThemeHint(); }
+    });
+    applyThemeHint();
+
+    const deck = new Reveal({ hash: true, transition: "fade", controls: true, progress: true,
+      plugins: [ RevealNotes ] });
+    deck.initialize().then(() => {
+      syncScene(deck.getCurrentSlide());
+      deck.on("slidechanged", (e) => syncScene(e.currentSlide));
+    });
+  </script>
+</body>
+</html>

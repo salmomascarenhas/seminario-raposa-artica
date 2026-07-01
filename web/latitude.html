@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Simulador de latitude, Ato 2</title>
+<link rel="stylesheet" href="css/main.css" />
+<script type="importmap">
+{
+  "imports": {
+    "three": "./vendor/three/three.module.js",
+    "three/addons/": "./vendor/three/addons/"
+  }
+}
+</script>
+<style>
+  /* painel de controle do simulador */
+  .panel {
+    position: fixed; left: 50%; bottom: 28px; transform: translateX(-50%);
+    z-index: 10; width: min(560px, 90vw);
+    display: flex; flex-direction: column; gap: 12px;
+    padding: 16px; border: 1px solid var(--border); border-radius: 10px;
+    background: rgba(17, 23, 37, 0.82); backdrop-filter: blur(8px);
+  }
+  .panel .row { display: flex; justify-content: space-between; align-items: baseline; }
+  .panel .label { font-size: 11px; letter-spacing: 0.1em; color: var(--fg-muted); text-transform: uppercase; }
+  .panel .val { font-size: 28px; font-weight: 600; font-variant-numeric: tabular-nums; }
+  .panel .val.lat { color: var(--fg); }
+  .panel .val.inc { color: var(--gold); }
+  .panel .unit { font-size: 14px; color: var(--fg-muted); }
+  .panel input[type="range"] {
+    width: 100%; accent-color: var(--gold); height: 4px; cursor: pointer;
+  }
+  .panel .ticks { display: flex; justify-content: space-between; font-size: 10px; color: var(--fg-muted); }
+</style>
+</head>
+<body>
+  <div id="stage"></div>
+  <div class="badge sim" id="badge" style="color:var(--teal)">MODELO</div>
+  <div class="panel">
+    <div class="row">
+      <div><span class="label">Latitude magnética λ</span><br><span class="val lat"><span id="lat">3</span><span class="unit">°</span></span></div>
+      <div style="text-align:right"><span class="label">Inclinação I = atan(2·tan λ)</span><br><span class="val inc"><span id="inc">0.0</span><span class="unit">°</span></span></div>
+    </div>
+    <input type="range" id="slider" min="0" max="89" step="1" value="3" />
+    <div class="ticks"><span>0° equador (Sobral)</span><span>45°</span><span>90° polo</span></div>
+  </div>
+
+<script type="module">
+import { syntheticFrame, derive, syntheticField } from "./js/field-model.js";
+import { mountRenderer } from "./js/pick-renderer.js";
+
+let latitude = 3; // Sobral ~3°S, perto do equador magnético
+
+// Fonte sintética: o renderizador-herói consome o mesmo contrato, agora do modelo.
+mountRenderer(document.getElementById("stage"), () => syntheticFrame(latitude));
+
+const slider = document.getElementById("slider");
+const latEl = document.getElementById("lat");
+const incEl = document.getElementById("inc");
+
+function update() {
+  latitude = Number(slider.value);
+  latEl.textContent = latitude.toFixed(0);
+  incEl.textContent = derive(syntheticField(latitude)).inclination.toFixed(1);
+}
+slider.addEventListener("input", update);
+update();
+</script>
+</body>
+</html>

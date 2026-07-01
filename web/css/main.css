@@ -1,0 +1,89 @@
+/* design-principles: dark slate, accent dourado único, dados em mono tabular-nums */
+:root {
+  --bg: #0a0e16;
+  --fg: #e8edf5;
+  --fg-secondary: rgba(232, 237, 245, 0.72);
+  --fg-muted: rgba(232, 237, 245, 0.45);
+  --gold: #ffd23f;
+  --teal: #36e0c0;
+  --border: rgba(255, 255, 255, 0.08);
+  --mono: ui-monospace, "SF Mono", "JetBrains Mono", Menlo, monospace;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; }
+body { background: var(--bg); color: var(--fg); font-family: var(--mono); overflow: hidden; }
+
+#stage { position: fixed; inset: 0; }
+
+/* selo AO VIVO / SIMULADO, reflete o status do TelemetrySource.
+   Grande e de alto contraste: precisa ler de longe na projeção. */
+.badge {
+  position: fixed; top: 22px; right: 22px; z-index: 10;
+  font-size: 30px; font-weight: 600; letter-spacing: 0.1em;
+  padding: 12px 24px; border-radius: 10px;
+  border: 2px solid var(--border);
+  background: rgba(20, 26, 40, 0.82);
+}
+.badge::before {
+  content: ""; display: inline-block; width: 16px; height: 16px;
+  border-radius: 50%; margin-right: 12px; vertical-align: middle;
+}
+.badge.live { border-color: var(--teal); }
+.badge.sim { border-color: var(--gold); }
+
+/* aviso de calibração em andamento (payload calibrating=true) */
+.cal-banner {
+  position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+  z-index: 20; text-align: center;
+  font-size: 34px; font-weight: 600; letter-spacing: 0.04em;
+  color: var(--bg); background: var(--gold);
+  padding: 22px 40px; border-radius: 14px;
+  box-shadow: 0 12px 48px rgba(0, 0, 0, 0.5);
+}
+.cal-banner[hidden] { display: none; }
+
+/* botões de comando da demo (calibrar / tare / congelar) */
+.controls {
+  position: fixed; right: 22px; bottom: 22px; z-index: 10;
+  display: flex; gap: 12px;
+}
+.controls button {
+  font-family: var(--mono); font-size: 20px; font-weight: 500;
+  color: var(--fg); background: rgba(20, 26, 40, 0.82);
+  border: 2px solid var(--border); border-radius: 10px;
+  padding: 12px 22px; cursor: pointer;
+}
+.controls button:hover { border-color: var(--gold); color: var(--gold); }
+.controls button:active { background: rgba(255, 210, 63, 0.15); }
+.badge.live { color: var(--teal); }
+.badge.live::before { background: var(--teal); box-shadow: 0 0 8px var(--teal); }
+.badge.sim { color: var(--gold); }
+.badge.sim::before { background: var(--gold); box-shadow: 0 0 8px var(--gold); }
+
+/* leitura numérica das grandezas derivadas, grande, lê de longe na projeção */
+.readout {
+  position: fixed; left: 22px; bottom: 22px; z-index: 10;
+  display: flex; flex-direction: column; gap: 14px;
+  font-variant-numeric: tabular-nums;
+}
+.readout .metric {
+  display: flex; flex-direction: column; gap: 2px;
+  background: rgba(20, 26, 40, 0.82);
+  border: 2px solid var(--border); border-radius: 12px;
+  padding: 12px 20px;
+}
+.readout .label {
+  font-size: 16px; letter-spacing: 0.06em; text-transform: uppercase;
+  color: var(--fg-muted);
+}
+.readout .value {
+  font-size: 40px; font-weight: 600; color: var(--fg); line-height: 1;
+}
+.readout .unit {
+  font-size: 22px; font-weight: 500; color: var(--fg-secondary);
+  margin-left: 4px;
+}
+/* a inclinação é a estrela da demo: maior e em dourado */
+.readout .hero { border-color: var(--gold); }
+.readout .hero .value { font-size: 64px; color: var(--gold); }
+.readout .hero .unit { color: var(--gold); }

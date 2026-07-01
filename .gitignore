@@ -1,0 +1,31 @@
+# PlatformIO
+firmware/.pio/
+firmware/.pioenvs/
+firmware/.piolibdeps/
+firmware/.vscode/
+.pio/
+
+# Node / ferramentas web
+node_modules/
+dist/
+.cache/
+
+# Sistema
+.DS_Store
+Thumbs.db
+*.log
+
+# Editor
+.vscode/*
+!.vscode/extensions.json
+.idea/
+
+# artefatos do Playwright MCP
+.playwright-mcp/
+/sources
+
+# Bundle local para importar no Claude Design (cópias; não versionar)
+handoff-claude-design/
+
+# Export offline do Claude Design (contém roteiro; manter só local)
+archive/slides/claude-design/

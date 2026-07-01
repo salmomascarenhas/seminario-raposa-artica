@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Teste WebSocket, Raposa Ártica</title>
+  <style>
+    body { font: 14px ui-monospace, monospace; background: #0d1117; color: #e8edf5; margin: 0; padding: 1.5rem; }
+    h1 { font-size: 1rem; color: #ffd23f; }
+    #status { padding: .4rem .7rem; border-radius: 6px; display: inline-block; margin-bottom: 1rem; }
+    .on { background: #1a4d2e; color: #36e08a; }
+    .off { background: #4d1a1a; color: #ff6a6a; }
+    .grid { display: grid; grid-template-columns: 140px 1fr; gap: .3rem 1rem; max-width: 420px; margin-bottom: 1.5rem; }
+    .k { color: #8aa; } .v { color: #ffd23f; }
+    #raw { white-space: pre-wrap; color: #6a7a8a; font-size: 12px; max-height: 40vh; overflow: auto; border-top: 1px solid #233; padding-top: .8rem; }
+    #hz { color: #36e08a; }
+  </style>
+</head>
+<body>
+  <h1>Teste WebSocket, ws://192.168.4.1/ws</h1>
+  <div id="status" class="off">desconectado</div>
+  <div class="grid" id="fields"></div>
+  <div>taxa: <span id="hz">0</span> msg/s</div>
+  <div id="raw"></div>
+
+  <script>
+    const url = "ws://192.168.4.1/ws";
+    const status = document.getElementById("status");
+    const fields = document.getElementById("fields");
+    const raw = document.getElementById("raw");
+    const hzEl = document.getElementById("hz");
+    let count = 0;
+
+    setInterval(() => { hzEl.textContent = count; count = 0; }, 1000);
+
+    function connect() {
+      const ws = new WebSocket(url);
+      ws.onopen = () => { status.textContent = "conectado"; status.className = "on"; };
+      ws.onclose = () => {
+        status.textContent = "desconectado, tentando reconectar...";
+        status.className = "off";
+        setTimeout(connect, 1000);
+      };
+      ws.onmessage = (ev) => {
+        count++;
+        raw.textContent = ev.data;
+        try {
+          const d = JSON.parse(ev.data);
+          fields.innerHTML = Object.entries(d)
+            .map(([k, v]) => `<div class="k">${k}</div><div class="v">${typeof v === "number" ? v.toFixed(2) : v}</div>`)
+            .join("");
+        } catch (e) {}
+      };
+    }
+    connect();
+  </script>
+</body>
+</html>
