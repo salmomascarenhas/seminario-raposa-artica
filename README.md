@@ -13,6 +13,8 @@ campo ao vivo.
 
 ## Demonstração em vídeo
 
+Assista à demonstração completa no YouTube: **https://www.youtube.com/watch?v=2cIvMzCbPyE**
+
 [![Assista à demonstração no YouTube](assets/demo.png)](https://www.youtube.com/watch?v=2cIvMzCbPyE)
 
 ## O que ele faz
