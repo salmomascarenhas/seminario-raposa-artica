@@ -9,13 +9,17 @@ A ideia central: o mesmo campo que se supõe guiar uma raposa na caça é o camp
 sensor de um celular lê para achar o norte. Aqui a gente fabrica esse sensor e mede o
 campo ao vivo.
 
-![Demo ao vivo: vetor do campo em 3D com inclinação, intensidade e rumo](assets/demo.gif)
+![A raposa-ártica mergulha na neve sobre uma presa que não enxerga](assets/raposa.gif)
 
-## Demonstração em vídeo
+> A raposa que dá nome ao projeto. Trecho do documentário da BBC, usado de forma
+> ilustrativa. Vídeo completo no YouTube: https://www.youtube.com/watch?v=2cIvMzCbPyE
 
-Assista à demonstração completa no YouTube: **https://www.youtube.com/watch?v=2cIvMzCbPyE**
+## A demonstração do projeto
 
-[![Assista à demonstração no YouTube](assets/demo.png)](https://www.youtube.com/watch?v=2cIvMzCbPyE)
+O sensor lê o campo magnético da sala em tempo real e a página desenha o vetor em 3D,
+com a inclinação, a intensidade e o rumo:
+
+![Demo do projeto: vetor do campo em 3D com inclinação, intensidade e rumo](assets/demo.gif)
 
 ## O que ele faz
 
